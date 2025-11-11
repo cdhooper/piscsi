@@ -76,6 +76,18 @@ def test_attach_device_with_image(http_client, create_test_image, detach_devices
                 },
             },
         ),
+        (
+            "Streamer (Tape) Drive",
+            {
+                "type": "SCTP",
+                "drive_props": {
+                    "vendor": "TP VENDOR",
+                    "product": "TP PRODUCT",
+                    "revision": "0123",
+                    "block_size": "512",
+                },
+            },
+        ),
         # TODO: Find a portable way to detect network interfaces for testing
         ("Ethernet Adapter", {"type": "SCDP", "param_inet": "192.168.0.1/24"}),
         ("Host Services", {"type": "SCHS"}),
@@ -159,17 +171,35 @@ def test_detach_all_devices(http_client, create_test_image, list_attached_images
     assert list_attached_images() == []
 
 
-def test_eject_device(http_client, create_test_image, detach_devices):
+@pytest.mark.parametrize(
+    "device_name,device_type",
+    [
+        ("Removable Disk Drive", "SCRM"),
+        ("Magneto-Optical Drive", "SCMO"),
+        ("CD/DVD Drive", "SCCD"),
+        ("Streamer (Tape) Drive", "SCTP"),
+    ],
+)
+def test_eject_device(http_client, create_test_image, detach_devices, device_name, device_type):
     test_image = create_test_image()
 
-    http_client.post(
+    response = http_client.post(
         ATTACH_ENDPOINT,
         data={
             "file_name": test_image,
             "scsi_id": SCSI_ID,
             "unit": 0,
-            "type": "SCCD",  # CD-ROM
+            "type": device_type,
         },
+    )
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert response_data["status"] == STATUS_SUCCESS
+    assert (
+        response_data["messages"][0]["message"]
+        == f"Attached {device_name} to SCSI ID {SCSI_ID} LUN 0"
     )
 
     response = http_client.post(
@@ -185,6 +215,25 @@ def test_eject_device(http_client, create_test_image, detach_devices):
     assert response.status_code == 200
     assert response_data["status"] == STATUS_SUCCESS
     assert response_data["messages"][0]["message"] == f"Ejected SCSI ID {SCSI_ID} LUN 0"
+
+    response = http_client.post(
+        ATTACH_ENDPOINT,
+        data={
+            "file_name": test_image,
+            "scsi_id": SCSI_ID,
+            "unit": 0,
+            "type": device_type,
+        },
+    )
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert response_data["status"] == STATUS_SUCCESS
+    assert (
+        response_data["messages"][0]["message"]
+        == f"Attached {device_name} to SCSI ID {SCSI_ID} LUN 0"
+    )
 
     # Cleanup
     detach_devices()
