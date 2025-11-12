@@ -137,7 +137,7 @@ def test_detach_all_devices(http_client, create_test_image, list_attached_images
     ],
 )
 def test_eject_device(http_client, create_test_image, detach_devices, device_name, device_type, extension):
-    test_image = create_test_image(extension=extension)
+    test_image = create_test_image(image_type=extension)
     response = http_client.post(
         ATTACH_ENDPOINT,
         data={
