@@ -45,10 +45,10 @@ SYS_RENAME_ENDPOINT = "/sys/rename"
 
 
 @pytest.fixture(scope="function")
-def create_test_image(request, http_client):
+def create_test_image(request, http_client, extension=".hds"):
     images = []
 
-    def create(image_type="hds", size=1, auto_delete=True):
+    def create(image_type=extension, size=1, auto_delete=True):
         file_prefix = f"{request.function.__name__}___{uuid.uuid4()}"
         file_name = f"{file_prefix}.{image_type}"
 

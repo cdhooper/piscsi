@@ -128,17 +128,16 @@ def test_detach_all_devices(http_client, create_test_image, list_attached_images
 
 
 @pytest.mark.parametrize(
-    "device_name,device_type",
+    "device_name,device_type,extension",
     [
-        ("Removable Disk Drive", "SCRM"),
-        ("Magneto-Optical Drive", "SCMO"),
-        ("CD/DVD Drive", "SCCD"),
-        ("Streamer (Tape) Drive", "SCTP"),
+        ("Removable Disk Drive", "SCRM", "hds"),
+        ("Magneto-Optical Drive", "SCMO", "mos"),
+        ("CD/DVD Drive", "SCCD", "iso"),
+        ("Streamer (Tape) Drive", "SCTP", "tap"),
     ],
 )
-def test_eject_device(http_client, create_test_image, detach_devices, device_name, device_type):
-    test_image = create_test_image()
-
+def test_eject_device(http_client, create_test_image, detach_devices, device_name, device_type, extension):
+    test_image = create_test_image(extension=extension)
     response = http_client.post(
         ATTACH_ENDPOINT,
         data={
