@@ -40,53 +40,10 @@ def test_attach_device_with_image(http_client, create_test_image, detach_devices
 @pytest.mark.parametrize(
     "device_name,device_config",
     [
-        (
-            "Removable Disk Drive",
-            {
-                "type": "SCRM",
-                "drive_props": {
-                    "vendor": "HD VENDOR",
-                    "product": "HD PRODUCT",
-                    "revision": "0123",
-                    "block_size": "512",
-                },
-            },
-        ),
-        (
-            "Magneto-Optical Drive",
-            {
-                "type": "SCMO",
-                "drive_props": {
-                    "vendor": "MO VENDOR",
-                    "product": "MO PRODUCT",
-                    "revision": "0123",
-                    "block_size": "512",
-                },
-            },
-        ),
-        (
-            "CD/DVD Drive",
-            {
-                "type": "SCCD",
-                "drive_props": {
-                    "vendor": "CD VENDOR",
-                    "product": "CD PRODUCT",
-                    "revision": "0123",
-                    "block_size": "512",
-                },
-            },
-        ),
-        (
-            "Streamer (Tape) Drive",
-            {
-                "type": "SCTP",
-                "drive_props": {
-                    "vendor": "TP VENDOR",
-                    "product": "TP PRODUCT",
-                    "revision": "0123",
-                },
-            },
-        ),
+        ("Removable Disk Drive", {"type": "SCRM"}),
+        ("Magneto-Optical Drive", {"type": "SCMO"}),
+        ("CD/DVD Drive", {"type": "SCCD"}),
+        ("Streamer (Tape) Drive", {"type": "SCTP"}),
         # TODO: Find a portable way to detect network interfaces for testing
         ("Ethernet Adapter", {"type": "SCDP", "param_inet": "192.168.0.1/24"}),
         ("Host Services", {"type": "SCHS"}),
