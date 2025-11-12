@@ -84,7 +84,6 @@ def test_attach_device_with_image(http_client, create_test_image, detach_devices
                     "vendor": "TP VENDOR",
                     "product": "TP PRODUCT",
                     "revision": "0123",
-                    "block_size": "512",
                 },
             },
         ),
